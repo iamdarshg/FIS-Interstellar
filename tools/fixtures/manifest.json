@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "learn",
+      "description": "12 initial target learning frames",
+      "width": 320,
+      "height": 240,
+      "containsPeople": false,
+      "sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+      "frameCount": 12,
+      "frameIntervalMs": 100,
+      "expectedTerminalState": "LEARNING"
+    },
+    {
+      "id": "distractor",
+      "description": "Target object alongside distractors with low similarity",
+      "width": 320,
+      "height": 240,
+      "containsPeople": false,
+      "sha256": "8a32a688edfe69527f3115456f93d39575e9b7b9195392ef43c3b0638abf0310",
+      "frameCount": 10,
+      "frameIntervalMs": 100,
+      "expectedTerminalState": "SEARCHING"
+    },
+    {
+      "id": "occlude_reacquire",
+      "description": "Target occlusion for 500ms followed by reacquisition",
+      "width": 320,
+      "height": 240,
+      "containsPeople": false,
+      "sha256": "1f8b724458f2762287955c45df19f5643444857b2ab14d8d172e2cf5a88c3a93",
+      "frameCount": 15,
+      "frameIntervalMs": 100,
+      "expectedTerminalState": "TRACKED"
+    },
+    {
+      "id": "occlude_lost",
+      "description": "Target occlusion for 3500ms leading to LOST state",
+      "width": 320,
+      "height": 240,
+      "containsPeople": false,
+      "sha256": "d463b27bcfb92d6e27b952f41639d6757b120df0f10c75c8cb24b4c73087a942",
+      "frameCount": 40,
+      "frameIntervalMs": 100,
+      "expectedTerminalState": "LOST"
+    },
+    {
+      "id": "lighting",
+      "description": "Target tracking under varying synthetic illumination",
+      "width": 320,
+      "height": 240,
+      "containsPeople": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "frameCount": 10,
+      "frameIntervalMs": 100,
+      "expectedTerminalState": "TRACKED"
+    }
+  ]
+}

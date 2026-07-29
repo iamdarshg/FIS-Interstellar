@@ -2,8 +2,6 @@ import json
 import socket
 import threading
 import time
-import pytest
-from hound_pi.agent import AgentEngine
 from hound_pi.server import Server
 
 

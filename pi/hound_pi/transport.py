@@ -1,11 +1,11 @@
 import sys
-from typing import Iterator
+from typing import IO, Iterator, Optional
 
 
 class LineTransport:
     """Reads line-delimited messages from input stream and writes to output stream."""
 
-    def __init__(self, in_stream=None, out_stream=None):
+    def __init__(self, in_stream: Optional[IO[str]] = None, out_stream: Optional[IO[str]] = None) -> None:
         self.in_stream = in_stream or sys.stdin
         self.out_stream = out_stream or sys.stdout
 

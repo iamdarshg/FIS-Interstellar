@@ -1,6 +1,5 @@
 import io
 import json
-import pytest
 from hypothesis import given, settings, strategies as st
 from hound_pi.agent import AgentEngine
 from hound_pi.transport import LineTransport
@@ -62,7 +61,7 @@ def test_transport_chunked_stream():
 
     engine.run(transport)
 
-    lines = [l for l in out_buf.getvalue().split("\n") if l.strip()]
+    lines = [line for line in out_buf.getvalue().split("\n") if line.strip()]
     assert len(lines) == 2
     r1 = json.loads(lines[0])
     r2 = json.loads(lines[1])

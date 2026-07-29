@@ -1,12 +1,12 @@
 import uuid
-from typing import Union
+from typing import Optional, Union
 from hound_pi.policy import StationaryPolicy
 from hound_pi.protocol import CommandAck, VisionState, parse_line
 from hound_pi.transport import LineTransport
 
 
 class AgentEngine:
-    def __init__(self, policy=None):
+    def __init__(self, policy: Optional[StationaryPolicy] = None) -> None:
         self.policy = policy or StationaryPolicy()
 
     def process_line(self, line: Union[str, bytes]) -> str:

@@ -1,4 +1,3 @@
-import select
 import socket
 import sys
 import time
@@ -7,7 +6,7 @@ from hound_pi.agent import AgentEngine
 
 
 class Server:
-    def __init__(self, engine: Optional[AgentEngine] = None):
+    def __init__(self, engine: Optional[AgentEngine] = None) -> None:
         self.engine = engine or AgentEngine()
         self.running = False
 
