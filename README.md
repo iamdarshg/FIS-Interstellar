@@ -1,6 +1,13 @@
 # HOUND Stationary MVP
 
-HOUND is a headless Android visual target learning and tracking system with explainable web dashboard and safe Raspberry Pi motor control integration.
+HOUND is a headless Android visual target learning and tracking system with an explainable web dashboard and safe Raspberry Pi motor control integration.
+
+## Documentation Overview
+
+- [Setup Guide](docs/SETUP.md): Environmental setup, Java/Python/Android dependencies, model exporter.
+- [Operations Guide](docs/OPERATIONS.md): System architecture, web dashboard usage, operating modes.
+- [Testing Matrix](docs/TESTING.md): DoD verification matrix, automated test gates, hardware requirements.
+- [Troubleshooting Guide](docs/TROUBLESHOOTING.md): Solutions for JVM, networking, and Pi hardware issues.
 
 ## Architecture & Features
 
@@ -22,8 +29,10 @@ scripts/                        Build & acceptance scripts
 docs/                           Setup, operations, troubleshooting docs
 ```
 
-## Running Checks
+## Running Verification
 
 ```powershell
 .\scripts\check.ps1
+.\scripts\acceptance.ps1
+.\scripts\soak.ps1
 ```
