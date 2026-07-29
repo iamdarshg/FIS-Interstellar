@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Any, Literal
+import json
+from typing import Any, Literal, Union
 import uuid
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
@@ -86,15 +87,35 @@ class CommandAck(BaseModel):
     reason: str
 
 
-def parse_line(line: bytes) -> MotionIntent:
-    if len(line) > 4096:
-        raise ValidationError.from_exception_data(
-            "MotionIntent", line_errors=[]
-        )
+def parse_line(line: Union[str, bytes]) -> Union[MotionIntent, VisionState, CommandAck]:
+    if isinstance(line, str):
+        raw_bytes = line.encode("utf-8")
+        decoded = line
+    else:
+        raw_bytes = line
+        try:
+            decoded = line.decode("utf-8")
+        except UnicodeDecodeError:
+            raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[])
+
+    if len(raw_bytes) > 4096:
+        raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[])
+
     try:
-        decoded = line.decode("utf-8")
-    except UnicodeDecodeError:
-        raise ValidationError.from_exception_data(
-            "MotionIntent", line_errors=[]
-        )
-    return MotionIntent.model_validate_json(decoded)
+        data = json.loads(decoded)
+        if not isinstance(data, dict):
+            raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[])
+
+        type_str = data.get("type")
+        if type_str == "motion_intent":
+            return MotionIntent.model_validate(data)
+        elif type_str == "vision_state":
+            return VisionState.model_validate(data)
+        elif type_str == "command_ack":
+            return CommandAck.model_validate(data)
+        else:
+            raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[])
+    except Exception as e:
+        if isinstance(e, ValidationError):
+            raise e
+        raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[]) from e
