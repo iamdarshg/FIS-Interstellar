@@ -1,6 +1,6 @@
-# HOUND Stationary MVP
+# HOUND Ambitious Robot-Vision Project
 
-HOUND is a headless Android visual target learning and tracking system with an explainable web dashboard and safe Raspberry Pi motor control integration.
+HOUND is intended to become a headless Android and Raspberry Pi robot that remembers multiple unfamiliar objects, finds a requested target, predicts it through motion and occlusion, ignores named distractors, and returns home after an autonomous search. The current codebase contains a host-tested stationary foundation; the ambitious movement and mission features remain required before competition sign-off.
 
 ## Documentation Overview
 
@@ -8,6 +8,8 @@ HOUND is a headless Android visual target learning and tracking system with an e
 - [Operations Guide](docs/OPERATIONS.md): System architecture, web dashboard usage, operating modes.
 - [Testing Matrix](docs/TESTING.md): DoD verification matrix, automated test gates, hardware requirements.
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md): Solutions for JVM, networking, and Pi hardware issues.
+- [Beginner Hardware Validation TODO](docs/HARDWARE_VALIDATION_TODO.md): Safe, step-by-step phone, offline, soak, Pi, and motor validation with explicit pass/fail gates.
+- [Final-Day Setup Guide](docs/FINAL_DAY_SETUP.md): Night-before packing, event setup, live demonstration, recovery, and fallback instructions.
 
 ## Architecture & Features
 
