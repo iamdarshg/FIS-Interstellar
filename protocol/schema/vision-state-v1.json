@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VisionState",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocolVersion", "type", "timestampMs", "mode", "confidence", "targetBox", "reason"],
+  "properties": {
+    "protocolVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "type": {
+      "type": "string",
+      "const": "vision_state"
+    },
+    "timestampMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["IDLE", "LEARNING", "SEARCHING", "TRACKED", "OCCLUDED", "LOST"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "targetBox": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["xMin", "yMin", "xMax", "yMax"],
+      "properties": {
+        "xMin": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "yMin": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "xMax": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "yMax": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+      }
+    },
+    "reason": {
+      "type": "string"
+    }
+  }
+}

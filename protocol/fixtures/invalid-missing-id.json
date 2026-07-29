@@ -1,0 +1,8 @@
+{
+  "protocolVersion": 1,
+  "type": "motion_intent",
+  "sentAtMs": 1700000000000,
+  "intent": "STOP",
+  "durationMs": 0,
+  "reason": "missing ID test"
+}

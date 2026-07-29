@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MotionIntent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocolVersion", "type", "id", "sentAtMs", "intent", "durationMs", "reason"],
+  "properties": {
+    "protocolVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "type": {
+      "type": "string",
+      "const": "motion_intent"
+    },
+    "id": {
+      "type": "string"
+    },
+    "sentAtMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "intent": {
+      "type": "string",
+      "enum": ["STOP", "ROTATE_LEFT", "ROTATE_RIGHT", "DRIVE_FORWARD"]
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 500
+    },
+    "reason": {
+      "type": "string"
+    }
+  }
+}

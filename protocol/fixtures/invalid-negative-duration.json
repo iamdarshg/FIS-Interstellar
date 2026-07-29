@@ -1,0 +1,9 @@
+{
+  "protocolVersion": 1,
+  "type": "motion_intent",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "sentAtMs": 1700000000000,
+  "intent": "STOP",
+  "durationMs": -50,
+  "reason": "negative duration test"
+}

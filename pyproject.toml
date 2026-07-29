@@ -26,6 +26,8 @@ dev = [
 testpaths = ["pi/tests", "tools/tests"]
 python_files = ["test_*.py"]
 addopts = "--import-mode=importlib"
+pythonpath = ["pi"]
+
 
 
 [tool.ruff]
