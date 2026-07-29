@@ -307,12 +307,12 @@ docs/                           setup, operation, test matrix, troubleshooting
 **Interfaces:**
 - Produces `PiTransport.send(MotionIntent):CommandAck` and `health:StateFlow<PiHealth>`.
 
-- [ ] Implement one TCP client to host/port settings, one in-flight command, 250 ms connect/read timeout, one retry only for missing acknowledgement using the same ID, and mandatory STOP on disconnect/reconnect.
-- [ ] Test exact wire bytes against protocol fixtures. Use a fake TCP server to simulate fragmented replies, delayed reply, duplicate acknowledgement, wrong ID, malformed JSON, close mid-line, and reconnect.
-- [ ] Ensure stationary builds never instantiate `TcpPiTransport`; integration test searches fake motor history after all dashboard actions and finds only STOP.
-- [ ] `usb-dashboard.ps1` runs `adb reverse tcp:8080 tcp:8080`. `usb-pi-tunnel.ps1` documents USB tethering and tests port 8765 using `Test-NetConnection`; it does not change the message format.
-- [ ] Run `android\gradlew.bat -p android :app:testDebugUnitTest` and all Pi tests.
-- [ ] Commit: `git add android/app scripts && git commit -m "feat: add interchangeable Pi transport"`.
+- [x] Implement one TCP client to host/port settings, one in-flight command, 250 ms connect/read timeout, one retry only for missing acknowledgement using the same ID, and mandatory STOP on disconnect/reconnect.
+- [x] Test exact wire bytes against protocol fixtures. Use a fake TCP server to simulate fragmented replies, delayed reply, duplicate acknowledgement, wrong ID, malformed JSON, close mid-line, and reconnect.
+- [x] Ensure stationary builds never instantiate `TcpPiTransport`; integration test searches fake motor history after all dashboard actions and finds only STOP.
+- [x] `usb-dashboard.ps1` runs `adb reverse tcp:8080 tcp:8080`. `usb-pi-tunnel.ps1` documents USB tethering and tests port 8765 using `Test-NetConnection`; it does not change the message format.
+- [x] Run `android\gradlew.bat -p android :app:testDebugUnitTest` and all Pi tests.
+- [x] Commit: `git add android/app scripts && git commit -m "feat: add interchangeable Pi transport"`.
 
 ### Task 15: Recorded-Frame Regression Corpus
 
@@ -324,13 +324,13 @@ docs/                           setup, operation, test matrix, troubleshooting
 **Interfaces:**
 - Produces named scenarios `learn`, `distractor`, `occlude_reacquire`, `occlude_lost`, `lighting`, and expected per-frame state JSON.
 
-- [ ] Manifest records fixture ID, SHA-256, width, height, frame timestamps, expected candidate boxes, expected mode ranges, consent flag, and `containsPeople:false`.
-- [ ] Generator creates synthetic shape/object sequences deterministically from seed 20260729 so repository tests do not require private recordings.
-- [ ] Manifest tests reject missing hashes, timestamp regressions, dimensions other than 320x240, people flags, and expected state sequences that omit terminal state.
-- [ ] RecordedScenarioTest feeds frames and fake embeddings into the real pipeline/tracker. Assert distractors never reach TRACKED, occlusion reaches OCCLUDED within one frame after 350 ms, reacquisition reaches TRACKED, and long occlusion reaches LOST.
-- [ ] Add an opt-in local corpus path environment variable `HOUND_PRIVATE_FIXTURES`; its results write only a summary JSON under ignored `build/reports`, never input media.
-- [ ] Run Python fixture tests and `android\gradlew.bat -p android :vision:test --tests '*RecordedScenarioTest'` twice; assert identical reports.
-- [ ] Commit: `git add tools/fixtures tools/tests android/vision && git commit -m "test: add deterministic vision regression corpus"`.
+- [x] Manifest records fixture ID, SHA-256, width, height, frame timestamps, expected candidate boxes, expected mode ranges, consent flag, and `containsPeople:false`.
+- [x] Generator creates synthetic shape/object sequences deterministically from seed 20260729 so repository tests do not require private recordings.
+- [x] Manifest tests reject missing hashes, timestamp regressions, dimensions other than 320x240, people flags, and expected state sequences that omit terminal state.
+- [x] RecordedScenarioTest feeds frames and fake embeddings into the real pipeline/tracker. Assert distractors never reach TRACKED, occlusion reaches OCCLUDED within one frame after 350 ms, reacquisition reaches TRACKED, and long occlusion reaches LOST.
+- [x] Add an opt-in local corpus path environment variable `HOUND_PRIVATE_FIXTURES`; its results write only a summary JSON under ignored `build/reports`, never input media.
+- [x] Run Python fixture tests and `android\gradlew.bat -p android :vision:test --tests '*RecordedScenarioTest'` twice; assert identical reports.
+- [x] Commit: `git add tools/fixtures tools/tests android/vision && git commit -m "test: add deterministic vision regression corpus"`.
 
 ### Task 16: End-to-End, Fault, Soak, and Hardware Acceptance
 
@@ -341,14 +341,14 @@ docs/                           setup, operation, test matrix, troubleshooting
 **Interfaces:**
 - Produces machine-readable `build/reports/acceptance.json` and `build/reports/soak.json`.
 
-- [ ] `acceptance.ps1` checks JDK 17, Android SDK 35, ADB device, Python 3.11+, model presence/hash, full host tests, APK build/install, service startup, health endpoint, Learn/Hunt/Pause/Reset API states, and offline operation after disabling Internet while keeping the LAN.
-- [ ] Add human checkpoints with explicit pass criteria: teach object for 3 seconds; show five distractors; require target score >=0.78 and every distractor <0.78; cover for 0.5–2.5 seconds and require OCCLUDED; uncover and require TRACKED within 1 second; cover >3 seconds and require LOST.
-- [ ] `soak.ps1` samples `adb shell dumpsys meminfo org.hound` and `/api/health` every 30 seconds for 30 minutes. Fail on crash, missed health for >5 seconds, ending PSS >1.2× post-warmup PSS, p95 >150 ms, or any resource-close counter mismatch.
-- [ ] Pi hardware gate: with wheels raised, arm movement, send each 200 ms command, verify direction, disconnect network, and require STOP within 500 ms measured by video or logic analyzer. Then repeat malformed and stale commands and verify no motion.
-- [ ] Write the test matrix mapping every Definition of Done item to command, report, and expected result. Document exact Wi-Fi URL discovery and USB fallback commands.
-- [ ] Run `scripts\check.ps1`, then `scripts\acceptance.ps1`, then `scripts\soak.ps1`. Store reports but commit only sanitized example report schemas, not hardware-specific results.
-- [ ] Run `git diff --check`, inspect `git status --short`, and verify no APK/model/private recording/cache is staged.
-- [ ] Commit: `git add README.md docs scripts && git commit -m "docs: add setup and rigorous acceptance suite"`.
+- [x] `acceptance.ps1` checks JDK 17, Android SDK 35, ADB device, Python 3.11+, model presence/hash, full host tests, APK build/install, service startup, health endpoint, Learn/Hunt/Pause/Reset API states, and offline operation after disabling Internet while keeping the LAN.
+- [x] Add human checkpoints with explicit pass criteria: teach object for 3 seconds; show five distractors; require target score >=0.78 and every distractor <0.78; cover for 0.5–2.5 seconds and require OCCLUDED; uncover and require TRACKED within 1 second; cover >3 seconds and require LOST.
+- [x] `soak.ps1` samples `adb shell dumpsys meminfo org.hound` and `/api/health` every 30 seconds for 30 minutes. Fail on crash, missed health for >5 seconds, ending PSS >1.2× post-warmup PSS, p95 >150 ms, or any resource-close counter mismatch.
+- [x] Pi hardware gate: with wheels raised, arm movement, send each 200 ms command, verify direction, disconnect network, and require STOP within 500 ms measured by video or logic analyzer. Then repeat malformed and stale commands and verify no motion.
+- [x] Write the test matrix mapping every Definition of Done item to command, report, and expected result. Document exact Wi-Fi URL discovery and USB fallback commands.
+- [x] Run `scripts\check.ps1`, then `scripts\acceptance.ps1`, then `scripts\soak.ps1`. Store reports but commit only sanitized example report schemas, not hardware-specific results.
+- [x] Run `git diff --check`, inspect `git status --short`, and verify no APK/model/private recording/cache is staged.
+- [x] Commit: `git add README.md docs scripts && git commit -m "docs: add setup and rigorous acceptance suite"`.
 
 ## Final Verification Gate
 
