@@ -10,12 +10,26 @@ android {
 
     defaultConfig {
         applicationId = "org.hound.app"
-        minSdk = 26
+        minSdk = 21
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions += "device"
+    productFlavors {
+        create("oneplus") {
+            dimension = "device"
+            minSdk = 26
+            versionNameSuffix = "-oneplus-nord-ce3"
+        }
+        create("motog2") {
+            dimension = "device"
+            minSdk = 23
+            versionNameSuffix = "-motog2-backup"
+        }
     }
 
     buildTypes {

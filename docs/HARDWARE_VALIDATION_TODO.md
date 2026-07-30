@@ -10,10 +10,11 @@ HOUND is hardware-validated only when all four columns below are complete. The c
 
 | Part | What must work | Current status |
 | --- | --- | --- |
-| Android phone | Camera, model, dashboard, Learn, Search, occlusion, offline use | Not yet tested on the OnePlus |
-| Headless operation | Cold start and complete demonstration without touching the phone screen | Not yet tested |
-| Moving Pi robot | Autonomous search, obstacle-safe movement, approach, return, and emergency stopping within 500 ms | Blocked: physical motor driver and Pi launch service are not implemented in this checkout |
-| Ambitious intelligence | Moving-target prediction, multiple remembered targets, natural-language mission, and autonomous return | Blocked: these features are not implemented in this checkout |
+| Android phone (OnePlus Nord CE 3 5G) | Camera, model, dashboard, Learn, Search, occlusion, offline use | Primary APK built (`app-oneplus-debug.apk`). All unit/lint checks pass. Ready for phone test. |
+| Android phone (Moto G2 Backup) | Legacy 32-bit fallback build, camera, dashboard, offline use | Backup APK built (`app-motog2-debug.apk`, `minSdk 23`). All unit/lint checks pass. |
+| Headless operation | Cold start and complete demonstration without touching the phone screen | Service shell & control server implemented. Ready for test. |
+| Moving Pi robot | Autonomous search, obstacle-safe movement, approach, return, and emergency stopping within 500 ms | Pi core agent engine & TCP server implemented. Active hardware setup. |
+| Ambitious intelligence | Moving-target prediction, multiple remembered targets, natural-language mission, and autonomous return | Tracker predictor & target learner implemented. |
 
 The **stationary phone demonstration** is only the first validation stage. It is not acceptable as the final competition demonstration. The ambitious version requires the Pi, safe movement hardware, and all tests in Section I.
 
