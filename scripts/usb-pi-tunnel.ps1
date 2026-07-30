@@ -1,9 +1,9 @@
 # USB Pi Tunnel Verification Script for HOUND
-# Documents USB tethering / USB IP link and tests Pi port 8765 without changing protocol message format.
+# Documents USB tethering / USB IP link and tests the Pi raw TCP control port without changing protocol message format.
 
 param(
     [string]$PiHost = "192.168.4.1",
-    [int]$Port = 8765
+    [int]$Port = 8766
 )
 
 $ErrorActionPreference = "Stop"

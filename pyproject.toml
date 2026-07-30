@@ -22,13 +22,14 @@ dev = [
     "mypy==1.15.0",
 ]
 
+[project.scripts]
+hound-pi = "hound_pi.server:main"
+
 [tool.pytest.ini_options]
 testpaths = ["pi/tests", "tools/tests"]
 python_files = ["test_*.py"]
 addopts = "--import-mode=importlib"
 pythonpath = ["pi"]
-
-
 
 [tool.ruff]
 line-length = 100

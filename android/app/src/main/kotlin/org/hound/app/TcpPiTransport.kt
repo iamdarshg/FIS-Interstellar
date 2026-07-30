@@ -21,10 +21,10 @@ import java.net.SocketTimeoutException
 import java.util.UUID
 
 class TcpPiTransport(
-    private val host: String = "127.0.0.1",
-    private val port: Int = 8765,
-    private val connectTimeoutMs: Int = 250,
-    private val readTimeoutMs: Int = 250
+    private val host: String = "192.168.4.1",
+    private val port: Int = 8766,
+    private val connectTimeoutMs: Int = 2000,
+    private val readTimeoutMs: Int = 1500
 ) : PiTransport {
 
     private val _health = MutableStateFlow(PiHealth())

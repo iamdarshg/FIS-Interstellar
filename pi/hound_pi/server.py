@@ -1,12 +1,16 @@
 import json
+import argparse
 import socket
 import sys
 import time
 import uuid
+import threading
+from pathlib import Path
 from typing import Any, Optional
 from aiohttp import web
 from hound_pi.agent import AgentEngine
 from hound_pi.dashboard_html import get_dashboard_html
+from hound_pi.ota import update_from_git
 from hound_pi.protocol import LocationCommand, Object2D
 from hound_pi.radar_ld1125h import HLKLD1125HRadar
 from hound_pi.spi_driver import SPIRoverController
@@ -238,5 +242,74 @@ class Server:
         app = self.create_web_app()
         web.run_app(app, host=host, port=port)
 
+    def start_services(
+        self,
+        web_host: str = "0.0.0.0",
+        web_port: int = 8765,
+        tcp_host: str = "0.0.0.0",
+        tcp_port: int = 8766,
+        update_on_start: bool = False,
+        repo_dir: str | None = None,
+        branch: str = "main",
+    ) -> None:
+        if update_on_start:
+            update_from_git(repo_dir or Path(__file__).resolve().parents[2], branch=branch)
+
+        tcp_thread = threading.Thread(
+            target=self.start_tcp_server,
+            args=(tcp_host, tcp_port),
+            daemon=True,
+            name="hound-pi-tcp",
+        )
+        tcp_thread.start()
+        self.start_web_server(web_host, web_port)
+
     def stop(self) -> None:
         self.running = False
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="HOUND Pi server")
+    parser.add_argument("--web-host", default="0.0.0.0")
+    parser.add_argument("--web-port", type=int, default=8765)
+    parser.add_argument("--tcp-host", default="0.0.0.0")
+    parser.add_argument("--tcp-port", type=int, default=8766)
+    parser.add_argument("--no-tcp", action="store_true")
+    parser.add_argument("--no-web", action="store_true")
+    parser.add_argument("--update-on-start", action="store_true")
+    parser.add_argument("--repo-dir", default=None)
+    parser.add_argument("--branch", default="main")
+    args = parser.parse_args(argv)
+
+    server = Server()
+    if args.update_on_start:
+        update_from_git(args.repo_dir or Path(__file__).resolve().parents[2], branch=args.branch)
+
+    if args.no_web and args.no_tcp:
+        parser.error("At least one server must be enabled")
+
+    if not args.no_web and not args.no_tcp:
+        server.start_services(
+            web_host=args.web_host,
+            web_port=args.web_port,
+            tcp_host=args.tcp_host,
+            tcp_port=args.tcp_port,
+            update_on_start=False,
+            repo_dir=args.repo_dir,
+            branch=args.branch,
+        )
+        return 0
+
+    if not args.no_tcp:
+        tcp_thread = threading.Thread(
+            target=server.start_tcp_server,
+            args=(args.tcp_host, args.tcp_port),
+            daemon=False,
+        )
+        tcp_thread.start()
+
+    if not args.no_web:
+        server.start_web_server(args.web_host, args.web_port)
+        return 0
+
+    return 0
