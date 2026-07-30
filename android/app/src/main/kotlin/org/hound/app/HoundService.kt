@@ -12,11 +12,18 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.hound.dashboard.DashboardState
 import org.hound.dashboard.HttpControlServer
+import org.hound.domain.MotionIntent
+import org.hound.domain.MotionKind
 import org.hound.domain.VisionMode
 import org.hound.domain.VisionState
 
@@ -57,6 +64,9 @@ class HoundService : Service() {
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var controlServer: HttpControlServer? = null
+    private var piTransport: PiTransport? = null
+    private var piDiscoveryJob: Job? = null
+    private val serviceScope = CoroutineScope(Dispatchers.IO)
     val dashboardState = DashboardState()
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -105,6 +115,35 @@ class HoundService : Service() {
                 }
             }
 
+            if (piTransport == null) {
+                dashboardState.onStartTriggered = {
+                    serviceScope.launch { sendMotion(MotionKind.DRIVE_FORWARD) }
+                }
+                dashboardState.onStopTriggered = {
+                    serviceScope.launch { sendMotion(MotionKind.STOP) }
+                }
+                dashboardState.onResetTriggered = {
+                    serviceScope.launch { sendMotion(MotionKind.STOP) }
+                }
+                dashboardState.onLearnTriggered = null
+                piDiscoveryJob = serviceScope.launch {
+                    val resolved = PiEndpointResolver().resolve(this@HoundService)
+                    if (resolved != null) {
+                        piTransport = TcpPiTransport(
+                            host = resolved.host,
+                            port = resolved.port
+                        )
+                        _healthState.value = _healthState.value.copy(
+                            message = "Pi discovered at ${resolved.host}:${resolved.port}"
+                        )
+                    } else {
+                        _healthState.value = _healthState.value.copy(
+                            message = "Pi control endpoint not found on the local network"
+                        )
+                    }
+                }
+            }
+
             dashboardState.visionState.set(
                 VisionState(
                     timestampMs = System.currentTimeMillis(),
@@ -131,8 +170,16 @@ class HoundService : Service() {
     }
 
     private fun handleStop() {
+        piDiscoveryJob?.cancel()
+        piDiscoveryJob = null
+        piTransport?.close()
+        piTransport = null
         controlServer?.stop()
         controlServer = null
+        dashboardState.onLearnTriggered = null
+        dashboardState.onStartTriggered = null
+        dashboardState.onStopTriggered = null
+        dashboardState.onResetTriggered = null
         releaseWakeLock()
         stopForeground(STOP_FOREGROUND_REMOVE)
         _healthState.value = ServiceHealth(
@@ -192,9 +239,26 @@ class HoundService : Service() {
 
     override fun onDestroy() {
         try {
+            serviceScope.cancel()
             releaseWakeLock()
         } finally {
             super.onDestroy()
+        }
+    }
+
+    private suspend fun sendMotion(intent: MotionKind) {
+        val transport = piTransport ?: return
+        try {
+            transport.send(
+                MotionIntent(
+                    id = java.util.UUID.randomUUID().toString(),
+                    sentAtMs = System.currentTimeMillis(),
+                    intent = intent,
+                    durationMs = 100,
+                    reason = "dashboard_trigger"
+                )
+            )
+        } catch (_: Exception) {
         }
     }
 }

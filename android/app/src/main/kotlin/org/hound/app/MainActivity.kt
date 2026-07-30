@@ -80,7 +80,8 @@ class MainActivity : AppCompatActivity() {
                     Status: ${health.status}
                     Error: ${health.errorCode}
                     Message: ${health.message}
-                    Dashboard URL: http://0.0.0.0:8080
+                    Dashboard URL: http://127.0.0.1:8080
+                    Pi control: auto-discovery on port 8766
                 """.trimIndent()
             }
         }
