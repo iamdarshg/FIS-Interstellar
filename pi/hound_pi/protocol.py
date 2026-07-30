@@ -87,7 +87,64 @@ class CommandAck(BaseModel):
     reason: str
 
 
-def parse_line(line: Union[str, bytes]) -> Union[MotionIntent, VisionState, CommandAck]:
+class LocationCommand(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    protocolVersion: Literal[1] = 1
+    type: Literal["location_command"] = "location_command"
+    id: str
+    sentAtMs: int = Field(..., ge=0)
+    targetX: float
+    targetY: float
+    speed: float = Field(default=1.0, ge=0.0, le=1.0)
+    reason: str
+
+    @field_validator("id")
+    @classmethod
+    def check_uuid(cls, v: str) -> str:
+        try:
+            uuid.UUID(v)
+        except ValueError:
+            raise ValueError("id must be a valid UUID format")
+        return v
+
+
+class Position2D(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    x: float
+    y: float
+
+
+class Object2D(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    id: str
+    label: str
+    x: float
+    y: float
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    distance: float = Field(..., ge=0.0)
+    angle: float
+    lastSeenMs: int = Field(..., ge=0)
+
+
+class MapState(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    protocolVersion: Literal[1] = 1
+    type: Literal["map_state"] = "map_state"
+    timestampMs: int = Field(..., ge=0)
+    roverX: float
+    roverY: float
+    roverHeading: float
+    objects: list[Object2D]
+
+
+ProtocolMessage = Union[MotionIntent, VisionState, CommandAck, LocationCommand, MapState]
+
+
+def parse_line(line: Union[str, bytes]) -> ProtocolMessage:
     if isinstance(line, str):
         raw_bytes = line.encode("utf-8")
         decoded = line
@@ -113,9 +170,14 @@ def parse_line(line: Union[str, bytes]) -> Union[MotionIntent, VisionState, Comm
             return VisionState.model_validate(data)
         elif type_str == "command_ack":
             return CommandAck.model_validate(data)
+        elif type_str == "location_command":
+            return LocationCommand.model_validate(data)
+        elif type_str == "map_state":
+            return MapState.model_validate(data)
         else:
             raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[])
     except Exception as e:
         if isinstance(e, ValidationError):
             raise e
         raise ValidationError.from_exception_data("ProtocolMessage", line_errors=[]) from e
+

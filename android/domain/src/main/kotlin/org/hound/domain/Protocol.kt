@@ -102,3 +102,69 @@ data class CommandAck(
         }
     }
 }
+
+@Serializable
+data class LocationCommand(
+    val protocolVersion: Int = 1,
+    val type: String = "location_command",
+    val id: String,
+    val sentAtMs: Long,
+    val targetX: Float,
+    val targetY: Float,
+    val speed: Float = 1.0f,
+    val reason: String
+) {
+    init {
+        require(protocolVersion == 1) { "protocolVersion must be 1" }
+        require(type == "location_command") { "type must be location_command" }
+        require(sentAtMs >= 0) { "sentAtMs must be >= 0" }
+        require(speed in 0.0f..1.0f) { "speed must be in [0.0, 1.0]" }
+        try {
+            UUID.fromString(id)
+        } catch (e: Exception) {
+            throw IllegalArgumentException("id must be a valid UUID", e)
+        }
+    }
+}
+
+@Serializable
+data class Position2D(
+    val x: Float,
+    val y: Float
+)
+
+@Serializable
+data class Object2D(
+    val id: String,
+    val label: String,
+    val x: Float,
+    val y: Float,
+    val confidence: Float,
+    val distance: Float,
+    val angle: Float,
+    val lastSeenMs: Long
+) {
+    init {
+        require(confidence in 0.0f..1.0f) { "confidence must be in [0.0, 1.0]" }
+        require(distance >= 0.0f) { "distance must be >= 0" }
+        require(lastSeenMs >= 0) { "lastSeenMs must be >= 0" }
+    }
+}
+
+@Serializable
+data class MapState(
+    val protocolVersion: Int = 1,
+    val type: String = "map_state",
+    val timestampMs: Long,
+    val roverX: Float,
+    val roverY: Float,
+    val roverHeading: Float,
+    val objects: List<Object2D>
+) {
+    init {
+        require(protocolVersion == 1) { "protocolVersion must be 1" }
+        require(type == "map_state") { "type must be map_state" }
+        require(timestampMs >= 0) { "timestampMs must be >= 0" }
+    }
+}
+
