@@ -4,7 +4,8 @@ set -e
 
 echo "=== Running HOUND Pi First-Boot Provisioning ==="
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INSTALL_DIR="/home/pi/hound_pi"
+USER_NAME="$(whoami)"
+INSTALL_DIR="/home/${USER_NAME}/hound_pi"
 REPO_URL="https://github.com/iamdarshg/FIS-Interstellar.git"
 
 echo "=== Installing repository to ${INSTALL_DIR} ==="
@@ -27,15 +28,19 @@ elif [ -f /boot/config.txt ]; then
     fi
 fi
 
+sudo chown -R "${USER_NAME}:${USER_NAME}" "${INSTALL_DIR}" 2>/dev/null || true
+
 cd "${INSTALL_DIR}"
 echo "=== Installing python package in ${INSTALL_DIR} ==="
 python3 -m pip install --break-system-packages -e . || python3 -m pip install -e .
 
 if [ -f "${SCRIPT_DIR}/hound-pi.service" ]; then
     echo "=== Installing systemd auto-start service ==="
-    cp "${SCRIPT_DIR}/hound-pi.service" /etc/systemd/system/
+    sudo sed \
+        -e "s|__HOUND_USER__|${USER_NAME}|g" \
+        -e "s|__HOUND_DIR__|${INSTALL_DIR}|g" \
+        "${SCRIPT_DIR}/hound-pi.service" | sudo tee /etc/systemd/system/hound-pi.service >/dev/null
     systemctl daemon-reload
-    systemctl enable hound-pi.service
-    systemctl restart hound-pi.service || systemctl start hound-pi.service
+    systemctl enable --now hound-pi.service
     echo "=== HOUND Pi Service is ACTIVE & ENABLED ON BOOT! ==="
 fi

@@ -5,9 +5,9 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=pi
-WorkingDirectory=/home/pi/hound_pi
-ExecStart=/usr/bin/python3 -m hound_pi.server --update-on-start --web-port 8765 --tcp-port 8766
+User=__HOUND_USER__
+WorkingDirectory=__HOUND_DIR__
+ExecStart=/usr/bin/python3 -m hound_pi --web-port 8765 --tcp-port 8766
 Restart=always
 RestartSec=3
 
