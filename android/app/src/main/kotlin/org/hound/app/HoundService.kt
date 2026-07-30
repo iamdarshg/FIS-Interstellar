@@ -15,6 +15,10 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.hound.dashboard.DashboardState
+import org.hound.dashboard.HttpControlServer
+import org.hound.domain.VisionMode
+import org.hound.domain.VisionState
 
 enum class ServiceStatus {
     STOPPED,
@@ -52,6 +56,8 @@ class HoundService : Service() {
     }
 
     private var wakeLock: PowerManager.WakeLock? = null
+    private var controlServer: HttpControlServer? = null
+    val dashboardState = DashboardState()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -92,6 +98,23 @@ class HoundService : Service() {
 
         try {
             cameraInitializer?.invoke(this)
+
+            if (controlServer == null) {
+                controlServer = HttpControlServer(dashboardState, port = 8080).apply {
+                    start()
+                }
+            }
+
+            dashboardState.visionState.set(
+                VisionState(
+                    timestampMs = System.currentTimeMillis(),
+                    mode = VisionMode.IDLE,
+                    confidence = 0.0f,
+                    targetBox = null,
+                    reason = "SERVICE_RUNNING"
+                )
+            )
+
             _healthState.value = ServiceHealth(
                 status = ServiceStatus.RUNNING,
                 errorCode = ServiceErrorCode.NONE,
@@ -108,6 +131,8 @@ class HoundService : Service() {
     }
 
     private fun handleStop() {
+        controlServer?.stop()
+        controlServer = null
         releaseWakeLock()
         stopForeground(STOP_FOREGROUND_REMOVE)
         _healthState.value = ServiceHealth(
