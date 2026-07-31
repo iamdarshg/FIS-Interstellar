@@ -3,7 +3,7 @@ package org.hound.domain
 class Tracker {
 
     companion object {
-        const val MATCH_THRESHOLD = 0.78f
+        const val MATCH_THRESHOLD = 0.65f
         const val OCCLUSION_GRACE_MS = 350L
         const val OCCLUSION_TIMEOUT_MS = 3000L
         const val MAX_STALE_MS = 250L

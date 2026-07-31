@@ -27,9 +27,9 @@ object YuvToRgb {
                 val uVal = (uBuffer[uvIndex].toInt() and 0xFF) - 128
                 val vVal = (vBuffer[uvIndex].toInt() and 0xFF) - 128
 
-                val r = (yVal + 1.402f * vVal).toInt().coerceIn(0, 255)
-                val g = (yVal - 0.344136f * uVal - 0.714136f * vVal).toInt().coerceIn(0, 255)
-                val b = (yVal + 1.772f * uVal).toInt().coerceIn(0, 255)
+                val r = (yVal + ((359 * vVal) shr 8)).coerceIn(0, 255)
+                val g = (yVal - ((88 * uVal + 183 * vVal) shr 8)).coerceIn(0, 255)
+                val b = (yVal + ((454 * uVal) shr 8)).coerceIn(0, 255)
 
                 val outIdx = (y * width + x) * 3
                 rgbUnrotated[outIdx] = r.toByte()

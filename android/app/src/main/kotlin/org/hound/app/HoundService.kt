@@ -115,17 +115,56 @@ class HoundService : Service() {
                 }
             }
 
+            dashboardState.onStartTriggered = {
+                dashboardState.visionState.set(
+                    VisionState(
+                        timestampMs = System.currentTimeMillis(),
+                        mode = VisionMode.SEARCHING,
+                        confidence = 0.0f,
+                        targetBox = null,
+                        reason = "search_started_by_user"
+                    )
+                )
+                serviceScope.launch { sendMotion(MotionKind.DRIVE_FORWARD) }
+            }
+            dashboardState.onLearnTriggered = {
+                dashboardState.visionState.set(
+                    VisionState(
+                        timestampMs = System.currentTimeMillis(),
+                        mode = VisionMode.LEARNING,
+                        confidence = 0.0f,
+                        targetBox = null,
+                        reason = "learning_started_by_user"
+                    )
+                )
+            }
+            dashboardState.onStopTriggered = {
+                dashboardState.visionState.set(
+                    VisionState(
+                        timestampMs = System.currentTimeMillis(),
+                        mode = VisionMode.IDLE,
+                        confidence = 0.0f,
+                        targetBox = null,
+                        reason = "stopped_by_user"
+                    )
+                )
+                serviceScope.launch { sendMotion(MotionKind.STOP) }
+            }
+            dashboardState.onResetTriggered = {
+                dashboardState.learnedTargets.clear()
+                dashboardState.visionState.set(
+                    VisionState(
+                        timestampMs = System.currentTimeMillis(),
+                        mode = VisionMode.IDLE,
+                        confidence = 0.0f,
+                        targetBox = null,
+                        reason = "reset_by_user"
+                    )
+                )
+                serviceScope.launch { sendMotion(MotionKind.STOP) }
+            }
+
             if (piTransport == null) {
-                dashboardState.onStartTriggered = {
-                    serviceScope.launch { sendMotion(MotionKind.DRIVE_FORWARD) }
-                }
-                dashboardState.onStopTriggered = {
-                    serviceScope.launch { sendMotion(MotionKind.STOP) }
-                }
-                dashboardState.onResetTriggered = {
-                    serviceScope.launch { sendMotion(MotionKind.STOP) }
-                }
-                dashboardState.onLearnTriggered = null
                 piDiscoveryJob = serviceScope.launch {
                     val resolved = PiEndpointResolver().resolve(this@HoundService)
                     if (resolved != null) {

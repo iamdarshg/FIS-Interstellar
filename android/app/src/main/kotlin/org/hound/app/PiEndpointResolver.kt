@@ -30,7 +30,11 @@ class PiEndpointResolver(
 
     private fun buildCandidateHosts(context: Context): List<String> {
         val hosts = mutableListOf<String>()
-        hosts += "192.168.4.1"
+        hosts += "192.168.4.1"   // Pi AP Default Static IP
+        hosts += "192.168.43.1"  // Android Hotspot Default Gateway
+        hosts += "172.20.10.1"   // iOS / Mobile Hotspot Gateway
+        hosts += "10.42.0.1"     // NetworkManager AP Gateway
+        hosts += "192.168.137.1" // Windows Shared Network Gateway
 
         val gateway = getGatewayAddress(context)
         if (gateway != null) {
