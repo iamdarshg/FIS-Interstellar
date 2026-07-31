@@ -22,6 +22,12 @@ enum class VisionMode {
 }
 
 @Serializable
+enum class MissionMode {
+    OBJECT_FINDING,
+    OBJECT_AVOIDANCE
+}
+
+@Serializable
 data class BoundingBox(
     val xMin: Float,
     val yMin: Float,

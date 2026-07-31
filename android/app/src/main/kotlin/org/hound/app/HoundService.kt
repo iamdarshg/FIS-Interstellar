@@ -60,6 +60,7 @@ class HoundService : Service() {
         val healthState: StateFlow<ServiceHealth> = _healthState.asStateFlow()
 
         var cameraInitializer: ((Context) -> Unit)? = null
+        var activeDashboardState: DashboardState? = null
     }
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -82,6 +83,8 @@ class HoundService : Service() {
     }
 
     private fun handleStart() {
+        activeDashboardState = dashboardState
+
         if (_healthState.value.status == ServiceStatus.RUNNING) {
             return
         }
@@ -209,6 +212,7 @@ class HoundService : Service() {
     }
 
     private fun handleStop() {
+        activeDashboardState = null
         piDiscoveryJob?.cancel()
         piDiscoveryJob = null
         piTransport?.close()
@@ -278,6 +282,7 @@ class HoundService : Service() {
 
     override fun onDestroy() {
         try {
+            activeDashboardState = null
             serviceScope.cancel()
             releaseWakeLock()
         } finally {
