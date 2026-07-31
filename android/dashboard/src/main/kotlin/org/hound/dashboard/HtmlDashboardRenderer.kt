@@ -289,8 +289,8 @@ object HtmlDashboardRenderer {
                 </div>
 
                 <div class="ip-notice">
-                    <span>📡 <strong>Active Web Control Dashboard URL (Works Untethered on Any Device):</strong> <span id="dynamicIpText" style="color: #6ee7b7; font-weight: 800;">http://172.20.10.14:8080</span></span>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);">Hotspot: Darsh’s iPhone (pwd12345)</span>
+                    <span>📡 <strong>Active Web Control Dashboard URL:</strong> <a href="http://192.168.7.7:80" id="dynamicIpText" style="color: #6ee7b7; font-weight: 800;">http://192.168.7.7:80</a></span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Network: 192.168.7.7 (Port 80 / 8080)</span>
                 </div>
 
                 <div class="grid-container">

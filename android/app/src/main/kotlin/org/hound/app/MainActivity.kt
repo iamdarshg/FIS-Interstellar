@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
                     Status: ${health.status}
                     Frames Captured: $frameCounter (${String.format("%.1f", currentFps)} FPS)
                     Message: ${health.message}
-                    Untethered Dashboard URL: http://172.20.10.14:8080
+                    Untethered Dashboard URL: http://192.168.7.7:80
                     Local ADB URL: http://127.0.0.1:8080
                 """.trimIndent()
             }
